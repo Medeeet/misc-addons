@@ -154,7 +154,7 @@
     </record>
     <menuitem
         name="Checklist"
-        parent="project.menu_project_management"
+        parent="project.menu_main_pm"
         id="menu_action_view_subtask"
         action="action_view_subtask"
     />
