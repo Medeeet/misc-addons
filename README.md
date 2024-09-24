@@ -1,8 +1,8 @@
 
 <!-- /!\ Non OCA Context : Set here the badge of your runbot / runboat instance. -->
-[![Pre-commit Status](https://github.com/it-projects-llc/misc-addons/actions/workflows/pre-commit.yml/badge.svg?branch=14.0)](https://github.com/it-projects-llc/misc-addons/actions/workflows/pre-commit.yml?query=branch%3A14.0)
-[![Build Status](https://github.com/it-projects-llc/misc-addons/actions/workflows/test.yml/badge.svg?branch=14.0)](https://github.com/it-projects-llc/misc-addons/actions/workflows/test.yml?query=branch%3A14.0)
-[![codecov](https://codecov.io/gh/it-projects-llc/misc-addons/branch/14.0/graph/badge.svg)](https://codecov.io/gh/it-projects-llc/misc-addons)
+[![Pre-commit Status](https://github.com/it-projects-llc/misc-addons/actions/workflows/pre-commit.yml/badge.svg?branch=17.0)](https://github.com/it-projects-llc/misc-addons/actions/workflows/pre-commit.yml?query=branch%3A17.0)
+[![Build Status](https://github.com/it-projects-llc/misc-addons/actions/workflows/test.yml/badge.svg?branch=17.0)](https://github.com/it-projects-llc/misc-addons/actions/workflows/test.yml?query=branch%3A17.0)
+[![codecov](https://codecov.io/gh/it-projects-llc/misc-addons/branch/17.0/graph/badge.svg)](https://codecov.io/gh/it-projects-llc/misc-addons)
 <!-- /!\ Non OCA Context : Set here the badge of your translation instance. -->
 
 <!-- /!\ do not modify above this line -->
