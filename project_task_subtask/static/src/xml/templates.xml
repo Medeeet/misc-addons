@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<template xml:space="preserve">
+    <t t-name="SubtaskSortButtons">
+        <div>
+            <button
+                aria-label="Sort"
+                class="btn btn-sm btn-primary o_pager_sort"
+                type="button"
+                t-if="!check_button"
+            >
+                Sort
+            </button>
+            <button
+                aria-label="Unsort"
+                class="btn btn-sm btn-default o_pager_unsort"
+                type="button"
+                t-if="check_button"
+            >
+                Unsort
+            </button>
+        </div>
+    </t>
+</template>
