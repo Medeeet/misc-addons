@@ -1,6 +1,6 @@
 from odoo import api, fields, models
 from odoo.exceptions import Warning as UserError
-from odoo.tools import html_escape as escape
+from odoo.tools import html_escape
 from odoo.tools.translate import _
 
 SUBTASK_STATES = {
@@ -9,6 +9,10 @@ SUBTASK_STATES = {
     "waiting": "Waiting",
     "cancelled": "Cancelled",
 }
+
+
+def escape(s):
+    return str(html_escape(s))
 
 
 class ProjectTaskSubtask(models.Model):
@@ -38,7 +42,7 @@ class ProjectTaskSubtask(models.Model):
     )
     hide_button = fields.Boolean(compute="_compute_hide_button")
     recolor = fields.Boolean(compute="_compute_recolor")
-    deadline = fields.Datetime(string="Deadline")
+    deadline = fields.Datetime()
 
     def _compute_recolor(self):
         for record in self:
@@ -126,23 +130,29 @@ class Task(models.Model):
     subtask_ids = fields.One2many("project.task.subtask", "task_id", "Subtask")
     kanban_subtasks = fields.Text(compute="_compute_kanban_subtasks")
     default_user = fields.Many2one("res.users", compute="_compute_default_user")
-    completion = fields.Integer("Completion", compute="_compute_completion")
+    completion = fields.Integer(compute="_compute_completion")
     completion_xml = fields.Text(compute="_compute_completion_xml")
 
     def _compute_default_user(self):
         for record in self:
-            if self.env.user != record.user_id and self.env.user != record.create_uid:
-                record.default_user = record.user_id
-            else:
-                if self.env.user != record.user_id:
-                    record.default_user = record.user_id
-                elif self.env.user != record.create_uid:
-                    record.default_user = record.create_uid
-                elif (
-                    self.env.user == record.create_uid
-                    and self.env.user == record.user_id
+            if len(record.user_ids) <= 1:
+                if (
+                    self.env.user != record.user_ids
+                    and self.env.user != record.create_uid
                 ):
-                    record.default_user = self.env.user
+                    record.default_user = record.user_ids
+                else:
+                    if self.env.user != record.user_ids:
+                        record.default_user = record.user_ids
+                    elif self.env.user != record.create_uid:
+                        record.default_user = record.create_uid
+                    elif (
+                        self.env.user == record.create_uid
+                        and self.env.user == record.user_ids
+                    ):
+                        record.default_user = self.env.user
+            else:
+                record.default_user = False
 
     def _compute_kanban_subtasks(self):
         for record in self:

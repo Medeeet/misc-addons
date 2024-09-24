@@ -40,7 +40,7 @@ odoo.define("project_task_subtask.tour", function (require) {
             timeout: 1000,
         },
         {
-            trigger: ".oe_kanban_content",
+            trigger: ".o_kanban_project_tasks .oe_kanban_content",
             content: "open task",
             timeout: 20000,
         },

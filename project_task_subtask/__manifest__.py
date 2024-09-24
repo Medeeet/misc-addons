@@ -12,9 +12,17 @@
     "data": [
         "security/ir.model.access.csv",
         "views/project_task_subtask.xml",
-        "views/assets.xml",
         "data/subscription_template.xml",
     ],
-    "qweb": ["static/src/xml/templates.xml"],
+    "assets": {
+        "web.assets_backend": [
+            "/project_task_subtask/static/src/css/kanban_styles.css",
+            "/project_task_subtask/static/src/js/one2many_renderer.js",
+            "/project_task_subtask/static/src/js/tours/tour.js",
+        ],
+        "web.assets_qweb": [
+            "/project_task_subtask/static/src/xml/templates.xml",
+        ],
+    },
     "demo": ["demo/project_task_subtask_demo.xml"],
 }
