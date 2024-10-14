@@ -3,7 +3,7 @@
     "summary": """Use checklist to be ensure that all your tasks are performed and to make easy control over them""",  # noqa: B950
     "category": """Project Management""",
     "images": ["images/checklist_main.png"],
-    "version": "15.0.1.0.0",
+    "version": "17.0.1.0.0",
     "author": "IT-Projects LLC",
     "support": "it@it-projects.info",
     "website": "https://github.com/it-projects-llc/misc-addons",

@@ -61,40 +61,42 @@
         </field>
     </record>
     <record id="view_task_kanban_subtasks" model="ir.ui.view">
-        <field name="name">project.task.kanban.subtasks</field>
-        <field name="model">project.task</field>
-        <field name="inherit_id" ref="project.view_task_kanban" />
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name ='tag_ids']" position="after">
-                <field name="completion" invisible="1" />
-                <field name="subtask_ids" invisible="1" />
-                <field name="kanban_subtasks" invisible="1" />
-                <field name="completion_xml" invisible="1" />
-            </xpath>
-            <xpath expr="//div[hasclass('o_kanban_record_bottom')]" position="before">
-                <div>
-                    <t t-raw="record.completion_xml.raw_value" />
-                    <t t-raw="record.kanban_subtasks.raw_value" />
-                </div>
-            </xpath>
-        </field>
-    </record>
-    <record model="ir.ui.view" id="view_id">
-        <field name="name">project.task.subtask</field>
-        <field name="model">project.task.subtask</field>
-        <field name="arch" type="xml">
-            <form string="Subtask Message">
-                <sheet>
-                    <group>
-                        <field name="name" />
-                        <field name="user_id" />
-                        <field name="state" />
-                        <field name="task_id" />
-                    </group>
-                </sheet>
-            </form>
-        </field>
-    </record>
+    <field name="name">project.task.kanban.subtasks</field>
+    <field name="model">project.task</field>
+    <field name="inherit_id" ref="project.view_task_kanban" />
+    <field name="arch" type="xml">
+        <xpath expr="//field[@name ='tag_ids']" position="after">
+            <field name="completion" invisible="1" />
+            <field name="subtask_ids" invisible="1" />
+            <field name="kanban_subtasks" invisible="1" />
+            <field name="completion_xml" invisible="1" />
+        </xpath>
+        <xpath expr="//div[hasclass('o_kanban_record_bottom')]" position="before">
+            <div>
+                <t t-raw="record.completion_xml.raw_value" />
+                <t t-raw="record.kanban_subtasks.raw_value" />
+            </div>
+        </xpath>
+    </field>
+</record>
+
+<record model="ir.ui.view" id="view_id">
+    <field name="name">project.task.subtask</field>
+    <field name="model">project.task.subtask</field>
+    <field name="arch" type="xml">
+        <form string="Subtask Message">
+            <sheet>
+                <group>
+                    <field name="name" />
+                    <field name="user_id" />
+                    <field name="state" />
+                    <field name="task_id" />
+                </group>
+            </sheet>
+        </form>
+    </field>
+</record>
+
     <record id="project_task_subtask_view_search" model="ir.ui.view">
         <field name="name">project.task.subtask.filter</field>
         <field name="model">project.task.subtask</field>

@@ -1,5 +1,7 @@
+from markupsafe import Markup, escape
+
 from odoo import api, fields, models
-from odoo.exceptions import Warning as UserError
+from odoo.exceptions import UserError
 from odoo.tools import html_escape
 from odoo.tools.translate import _
 
@@ -35,7 +37,7 @@ class ProjectTaskSubtask(models.Model):
     )
     user_id = fields.Many2one("res.users", "Assigned to", required=True)
     task_id = fields.Many2one(
-        "project.task", "Task", ondelete="cascade", required=True, index="1"
+        "project.task", "Task", ondelete="cascade", required=True, index=True
     )
     task_state = fields.Char(
         string="Task state", related="task_id.stage_id.name", readonly=True
@@ -125,8 +127,12 @@ class ProjectTaskSubtask(models.Model):
             record.state = "waiting"
 
 
+from markupsafe import Markup
+
+
 class Task(models.Model):
     _inherit = "project.task"
+
     subtask_ids = fields.One2many("project.task.subtask", "task_id", "Subtask")
     kanban_subtasks = fields.Text(compute="_compute_kanban_subtasks")
     default_user = fields.Many2one("res.users", compute="_compute_default_user")
@@ -156,8 +162,8 @@ class Task(models.Model):
 
     def _compute_kanban_subtasks(self):
         for record in self:
-            result_string_td = ""
-            result_string_wt = ""
+            result_string_td = Markup("")
+            result_string_wt = Markup("")
             if record.subtask_ids:
                 task_todo_ids = record.subtask_ids.filtered(
                     lambda x: x.state == "todo" and x.user_id.id == record.env.user.id
@@ -167,18 +173,18 @@ class Task(models.Model):
                     and x.user_id.id == record.env.user.id
                 )
                 if task_todo_ids:
-                    tmp_string_td = escape(": {}".format(len(task_todo_ids)))
-                    result_string_td += "<li><b>TODO{}</b></li>".format(tmp_string_td)
+                    result_string_td += Markup(
+                        f"<li><b>TODO: {len(task_todo_ids)}</b></li>"
+                    )
                 if task_waiting_ids:
-                    tmp_string_wt = escape(": {}".format(len(task_waiting_ids)))
-                    result_string_wt += "<li><b>Waiting{}</b></li>".format(
-                        tmp_string_wt
+                    result_string_wt += Markup(
+                        f"<li><b>Waiting: {len(task_waiting_ids)}</b></li>"
                     )
             record.kanban_subtasks = (
-                '<div class="kanban_subtasks"><ul>'
+                Markup('<div class="kanban_subtasks"><ul>')
                 + result_string_td
                 + result_string_wt
-                + "</ul></div>"
+                + Markup("</ul></div>")
             )
 
     def _compute_completion(self):
@@ -191,17 +197,20 @@ class Task(models.Model):
                 lambda x: x.user_id.id == record.env.user.id and x.state != "cancelled"
             )
             if not active_subtasks:
-                record.completion_xml = """
+                record.completion_xml = Markup(
+                    """
                     <div class="task_progress">
                     </div>
-                    """
+                """
+                )
                 continue
 
             completion = record.task_completion()
             color = "bg-success-full"
             if completion < 50:
                 color = "bg-danger-full"
-            record.completion_xml = """
+            record.completion_xml = Markup(
+                """
             <div class="task_progress">
                 <div class="progress_info">
                     Your Checklist:
@@ -220,7 +229,8 @@ class Task(models.Model):
                 <div class="task_completion"> {0}% </div>
             </div>
             """.format(
-                int(completion), color
+                    int(completion), color
+                )
             )
 
     def task_completion(self):
@@ -241,45 +251,55 @@ class Task(models.Model):
         old_name=None,
     ):
         for r in self:
-            body = ""
+            body = Markup("")  # Initialize body as a Markup object
             reviewer = self.env["res.users"].browse(subtask_reviewer_id)
             user = self.env["res.users"].browse(subtask_user_id)
-            state = SUBTASK_STATES[subtask_state]
+            state = Markup(SUBTASK_STATES[subtask_state])  # Keep state as Markup
+
+            # Set state color based on subtask state
             if subtask_state == "done":
-                state = '<span style="color:#080">' + state + "</span>"
-            if subtask_state == "todo":
-                state = '<span style="color:#A00">' + state + "</span>"
-            if subtask_state == "cancelled":
-                state = '<span style="color:#777">' + state + "</span>"
-            if subtask_state == "waiting":
-                state = '<span style="color:#b818ce">' + state + "</span>"
+                state = Markup('<span style="color:#080">' + str(state) + "</span>")
+            elif subtask_state == "todo":
+                state = Markup('<span style="color:#A00">' + str(state) + "</span>")
+            elif subtask_state == "cancelled":
+                state = Markup('<span style="color:#777">' + str(state) + "</span>")
+            elif subtask_state == "waiting":
+                state = Markup('<span style="color:#b818ce">' + str(state) + "</span>")
+
             partner_ids = []
-            subtype = "project_task_subtask.subtasks_subtype"
+
             if user == self.env.user and reviewer == self.env.user:
-                body = "<p>" + "<strong>" + state + "</strong>: " + escape(subtask_name)
-                subtype = False
+                body = Markup(
+                    "<p><strong>"
+                    + str(state)
+                    + "</strong>: "
+                    + escape(subtask_name)
+                    + "</p>"
+                )
             elif self.env.user == reviewer:
-                body = (
+                body = Markup(
                     "<p>"
                     + escape(user.name)
                     + ", <br><strong>"
-                    + state
+                    + str(state)
                     + "</strong>: "
                     + escape(subtask_name)
+                    + "</p>"
                 )
                 partner_ids = [user.partner_id.id]
             elif self.env.user == user:
-                body = (
+                body = Markup(
                     "<p>"
                     + escape(reviewer.name)
-                    + ', <em style="color:#999">I updated checklist item assigned to me:</em> <br><strong>'  # noqa: B950
-                    + state
+                    + ', <em style="color:#999">I updated checklist item assigned to me:</em> <br><strong>'
+                    + str(state)
                     + "</strong>: "
                     + escape(subtask_name)
+                    + "</p>"
                 )
                 partner_ids = [reviewer.partner_id.id]
             else:
-                body = (
+                body = Markup(
                     "<p>"
                     + escape(user.name)
                     + ", "
@@ -287,25 +307,26 @@ class Task(models.Model):
                     + ', <em style="color:#999">I updated checklist item, now its assigned to '
                     + escape(user.name)
                     + ": </em> <br><strong>"
-                    + state
+                    + str(state)
                     + "</strong>: "
                     + escape(subtask_name)
+                    + "</p>"
                 )
                 partner_ids = [user.partner_id.id, reviewer.partner_id.id]
+
             if old_name:
-                body = (
-                    body
-                    + '<br><em style="color:#999">Updated from</em><br><strong>'
-                    + state
+                body += Markup(
+                    '<br><em style="color:#999">Updated from</em><br><strong>'
+                    + str(state)
                     + "</strong>: "
                     + escape(old_name)
                     + "</p>"
                 )
             else:
-                body = body + "</p>"
+                body += Markup("</p>")
+
             r.message_post(
                 message_type="comment",
-                subtime_xmlid=subtype,
                 body=body,
                 partner_ids=partner_ids,
             )
