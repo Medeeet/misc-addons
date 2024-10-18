@@ -2,7 +2,6 @@ from markupsafe import Markup, escape
 
 from odoo import api, fields, models
 from odoo.exceptions import UserError
-from odoo.tools import html_escape
 from odoo.tools.translate import _
 
 SUBTASK_STATES = {
@@ -13,8 +12,8 @@ SUBTASK_STATES = {
 }
 
 
-def escape(s):
-    return str(html_escape(s))
+# def escape(s):
+#     return str(html_escape(s))
 
 
 class ProjectTaskSubtask(models.Model):
@@ -125,9 +124,6 @@ class ProjectTaskSubtask(models.Model):
     def change_state_waiting(self):
         for record in self:
             record.state = "waiting"
-
-
-from markupsafe import Markup
 
 
 class Task(models.Model):
